@@ -8,22 +8,22 @@ import java.util.UUID;
 
 public interface PublicationDao {
 
-    int addPublication(UUID id, Publication publication);
+    void addPublication(UUID id, Publication publication);
 
-    default int addPublication(Publication publication) {
+    default void addPublication(Publication publication) {
         UUID id = UUID.randomUUID();
-        return addPublication(id, publication);
+        addPublication(id, publication);
     }
 
     Optional<Publication> getPublicationById(UUID id);
 
     List<Publication> getAllPublications();
 
-    int deletePublicationById(UUID id);
+    void deletePublicationById(UUID id);
 
     void deleteAllPublications();
 
-    int updatePublication(UUID id, Publication updatedPublication);
+    void updatePublication(UUID id, Publication updatedPublication);
 
     List<Publication> getPublicationsByAuthor(String author);
 

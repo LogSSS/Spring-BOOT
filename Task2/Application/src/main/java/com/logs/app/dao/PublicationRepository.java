@@ -20,13 +20,12 @@ public class PublicationRepository implements PublicationDao {
     }
 
     @Override
-    public int addPublication(UUID id, Publication publication) {
+    public void addPublication(UUID id, Publication publication) {
         System.out.println(publication.getTitle());
         jdbcTemplate.update(
                 "INSERT INTO public.publications (id, title, author, year, publisher, pageCount ) VALUES (?, ?, ?, ?, ?, ?)",
                 publication.getId(), publication.getTitle(), publication.getAuthor(), publication.getYear(), publication.getPublisher(), publication.getPageCount()
         );
-        return 1;
     }
 
     @Override
@@ -59,11 +58,10 @@ public class PublicationRepository implements PublicationDao {
     }
 
     @Override
-    public int deletePublicationById(UUID id) {
+    public void deletePublicationById(UUID id) {
         final String query = "DELETE FROM public.publications WHERE id = ?";
         Object[] args = new Object[]{id};
-        int row = jdbcTemplate.update(query, args);
-        return row;
+        jdbcTemplate.update(query, args);
     }
 
     @Override
@@ -73,34 +71,28 @@ public class PublicationRepository implements PublicationDao {
     }
 
     @Override
-    public int updatePublication(UUID id, Publication updatedPublication) {
+    public void updatePublication(UUID id, Publication updatedPublication) {
         jdbcTemplate.update(
                 "UPDATE public.publications SET id = ?, title = ?, author = ?, year = ?, publisher = ?, pageCount = ? WHERE id = ?",
                 updatedPublication.getId(), updatedPublication.getTitle(), updatedPublication.getAuthor(), updatedPublication.getYear(), updatedPublication.getPublisher(), updatedPublication.getPageCount(), id
         );
-        return 1;
     }
 
 
     @Override
     public List<Publication> getPublicationsByAuthor(String Author) {
         final String query = "SELECT * FROM public.publications WHERE author = ?";
-        List<Publication> publications = jdbcTemplate.query(query, new Object[]{Author}, (resultSet, i) -> {
-            UUID publicationId = UUID.fromString(resultSet.getString("id"));
-            String title = resultSet.getString("title");
-            String author = resultSet.getString("author");
-            int year = resultSet.getInt("year");
-            String publisher = resultSet.getString("publisher");
-            int pageCount = resultSet.getInt("pageCount");
-            return new Publication(publicationId, title, author, year, publisher, pageCount);
-        });
-        return publications;
+        return getPublicationsBy(Author, query);
     }
 
     @Override
     public List<Publication> getPublicationsByPublisher(String Publisher) {
         final String query = "SELECT * FROM public.publications WHERE publisher = ?";
-        List<Publication> publications = jdbcTemplate.query(query, new Object[]{Publisher}, (resultSet, i) -> {
+        return getPublicationsBy(Publisher, query);
+    }
+
+    private List<Publication> getPublicationsBy(String data, String query) {
+        return jdbcTemplate.query(query, new Object[]{data}, (resultSet, i) -> {
             UUID publicationId = UUID.fromString(resultSet.getString("id"));
             String title = resultSet.getString("title");
             String author = resultSet.getString("author");
@@ -109,6 +101,5 @@ public class PublicationRepository implements PublicationDao {
             int pageCount = resultSet.getInt("pageCount");
             return new Publication(publicationId, title, author, year, publisher, pageCount);
         });
-        return publications;
     }
 }
