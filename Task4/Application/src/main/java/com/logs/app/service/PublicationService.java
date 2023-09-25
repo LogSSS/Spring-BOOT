@@ -39,8 +39,8 @@ public class PublicationService {
     }
 
     public void updatePublication(UUID id, Publication updatedPublication) {
-        publicationRepository.setBookById(updatedPublication.getTitle(), updatedPublication.getAuthor(), updatedPublication.getYear(),
-                updatedPublication.getPublisher(), updatedPublication.getPageCount(), updatedPublication.getId());
+        publicationRepository.setBookById(updatedPublication.getId(), updatedPublication.getTitle(), updatedPublication.getAuthor(), updatedPublication.getYear(),
+                updatedPublication.getPublisher(), updatedPublication.getPageCount(), id);
     }
 
     public List<Publication> getPublicationsByAuthor(String author) {
